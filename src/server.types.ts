@@ -21,12 +21,18 @@ export type Message = {
 export type Mutation = {
   __typename?: 'Mutation';
   editProfile: User;
+  sendMessage?: Maybe<Array<Maybe<Message>>>;
 };
 
 
 export type MutationEditProfileArgs = {
   email: Scalars['String'];
   name: Scalars['String'];
+};
+
+
+export type MutationSendMessageArgs = {
+  text: Scalars['String'];
 };
 
 export type Query = {
@@ -39,6 +45,11 @@ export type Query = {
 
 export type QueryUsersArgs = {
   filters?: Maybe<UserFilters>;
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  messageSent?: Maybe<Array<Maybe<Message>>>;
 };
 
 export type User = {
