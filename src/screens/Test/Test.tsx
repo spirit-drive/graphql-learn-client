@@ -1,9 +1,9 @@
-import React, { FormEventHandler, memo, useCallback } from 'react';
-import { gql, useQuery, useSubscription } from '@apollo/client';
-import { Subscription } from 'src/server.types';
+import React, { FormEventHandler, memo, useCallback, useEffect } from 'react';
+import { gql, useMutation, useQuery, useSubscription } from '@apollo/client';
+import { Subscription, User } from 'src/server.types';
 
-const GET = gql`
-  query get {
+const GET_PROFILE = gql`
+  query getProfile {
     profile {
       id
       name
@@ -12,9 +12,19 @@ const GET = gql`
   }
 `;
 
-const MESSAGE_SENT = gql`
-  subscription onMessageSent {
-    messageSent {
+const EDIT_PROFILE = gql`
+  mutation editProfile($name: String!, $email: String!) {
+    editProfile(name: $name, email: $email) {
+      id
+      name
+      email
+    }
+  }
+`;
+
+const MESSAGE_WAS_SENT = gql`
+  subscription onMessageWasSent {
+    messageWasSent {
       id
       text
     }
@@ -31,17 +41,29 @@ export type SendMessageVariables = {
 };
 
 export const Test = memo(() => {
-  const { data, error, loading } = useQuery(GET);
+  const { data, error, loading } = useQuery(GET_PROFILE);
+  const [editProfile, { data: editProfileData, error: editProfileError }] = useMutation<User, EditProfileVariables>(
+    EDIT_PROFILE
+  );
 
-  const { data: subscribeData } = useSubscription<Subscription>(MESSAGE_SENT);
+  useEffect(() => {
+    console.log({ editProfileData });
+  }, [editProfileData]);
 
-  const onSubmitEditProfile = useCallback<FormEventHandler>((e) => {
-    e.preventDefault();
-    const target = e.target as HTMLFormElement;
-    const emailInput = target.elements.namedItem('email') as HTMLInputElement;
-    const nameInput = target.elements.namedItem('name') as HTMLInputElement;
-    console.log({ emailInput, nameInput });
-  }, []);
+  const { data: subscribeData, error: subscribeError } = useSubscription<Subscription>(MESSAGE_WAS_SENT);
+
+  const onSubmitEditProfile = useCallback<FormEventHandler>(
+    (e) => {
+      e.preventDefault();
+      const target = e.target as HTMLFormElement;
+      const emailInput = target.elements.namedItem('email') as HTMLInputElement;
+      const nameInput = target.elements.namedItem('name') as HTMLInputElement;
+      const email = emailInput.value;
+      const name = nameInput.value;
+      editProfile({ variables: { name, email } });
+    },
+    [editProfile]
+  );
 
   const onSubmitMessage = useCallback<FormEventHandler>((e) => {
     e.preventDefault();
@@ -50,13 +72,16 @@ export const Test = memo(() => {
     console.log({ textInput });
   }, []);
 
-  if (loading) return <div>{loading}</div>;
-  if (error) return <div>{error.message}</div>;
+  if (loading) return <div>loading...</div>;
+  if (error || subscribeError || editProfileError)
+    return <div>{(error || subscribeError || editProfileError).message}</div>;
 
   return (
     <div>
       <div>Профиль</div>
       <div>{JSON.stringify(data)}</div>
+      <hr />
+
       <div>Редактировать профиль</div>
       <form onSubmit={onSubmitEditProfile}>
         <div>email</div>
@@ -67,9 +92,11 @@ export const Test = memo(() => {
           <button type="submit">Редактировать профиль</button>
         </div>
       </form>
+      <hr />
+
       <div>Сообщения</div>
       <div>
-        {subscribeData?.messageSent?.map((msg) => (
+        {subscribeData?.messageWasSent?.map((msg) => (
           <div key={msg.id}>{msg.text}</div>
         ))}
       </div>

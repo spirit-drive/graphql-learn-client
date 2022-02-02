@@ -49,7 +49,7 @@ export type QueryUsersArgs = {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  messageSent?: Maybe<Array<Maybe<Message>>>;
+  messageWasSent?: Maybe<Array<Maybe<Message>>>;
 };
 
 export type User = {

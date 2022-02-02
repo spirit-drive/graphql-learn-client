@@ -258,7 +258,7 @@
         "description": null,
         "fields": [
           {
-            "name": "messageSent",
+            "name": "messageWasSent",
             "description": null,
             "args": [],
             "type": {
