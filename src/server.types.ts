@@ -26,7 +26,7 @@ export type Money = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addUser: Array<Maybe<User>>;
+  addUser: User;
   editProfile: User;
   editUser: User;
   sendMessage?: Maybe<Array<Maybe<Message>>>;
