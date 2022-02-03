@@ -1,4 +1,4 @@
-import React, { FormEventHandler, memo, useCallback, useEffect } from 'react';
+import React, { FormEventHandler, memo, useCallback } from 'react';
 import { gql, useLazyQuery, useMutation, useQuery, useSubscription } from '@apollo/client';
 import { Mutation, Subscription } from 'src/server.types';
 
@@ -25,26 +25,6 @@ const GET_USERS = gql`
 const EDIT_PROFILE = gql`
   mutation editProfile($name: String!, $email: String!) {
     editProfile(name: $name, email: $email) {
-      id
-      name
-      email
-    }
-  }
-`;
-
-const EDIT_USER = gql`
-  mutation editUsers($id: ID!, $name: String!, $email: String!) {
-    editUser(id: $id, name: $name, email: $email) {
-      id
-      name
-      email
-    }
-  }
-`;
-
-const ADD_USER = gql`
-  mutation addUser($name: String!, $email: String!) {
-    addUser(name: $name, email: $email) {
       id
       name
       email
@@ -96,15 +76,9 @@ export const Test = memo(() => {
   const [editProfile, { error: editProfileError }] = useMutation<Pick<Mutation, 'editProfile'>, EditProfileVariables>(
     EDIT_PROFILE
   );
-  const [editUser, { error: editUserError }] = useMutation<Pick<Mutation, 'editUser'>, EditUserVariables>(EDIT_USER);
-  const [addUser] = useMutation<Pick<Mutation, 'addUser'>, AddUserVariables>(ADD_USER);
   const [sendMessage] = useMutation<Pick<Mutation, 'sendMessage'>, SendMessageVariables>(SEND_MESSAGE);
 
   const { data: subscribeData, error: subscribeError } = useSubscription<Subscription>(MESSAGE_WAS_SENT);
-
-  useEffect(() => {
-    console.log(editUserError);
-  }, [editUserError]);
 
   const onSubmitEditProfile = useCallback<FormEventHandler>(
     (e) => {
@@ -120,59 +94,27 @@ export const Test = memo(() => {
     [editProfile]
   );
 
-  const onSubmitEditUser = useCallback<FormEventHandler>(
-    (e) => {
-      e.preventDefault();
-      const target = e.target as HTMLFormElement;
-      const idInput = target.elements.namedItem('id') as HTMLInputElement;
-      const emailInput = target.elements.namedItem('email') as HTMLInputElement;
-      const nameInput = target.elements.namedItem('name') as HTMLInputElement;
-      const id = idInput.value;
-      const email = emailInput.value;
-      const name = nameInput.value;
-      target.reset();
-      editUser({
-        variables: { name, email, id },
-        optimisticResponse: {
-          editUser: {
-            id,
-            name,
-            email,
-            __typename: 'User',
-          },
-        },
-      })
-        .then((res) => console.log({ res }))
-        .catch((err) => console.error(err));
-    },
-    [editUser]
-  );
+  const onSubmitEditUser = useCallback<FormEventHandler>((e) => {
+    e.preventDefault();
+    const target = e.target as HTMLFormElement;
+    const idInput = target.elements.namedItem('id') as HTMLInputElement;
+    const emailInput = target.elements.namedItem('email') as HTMLInputElement;
+    const nameInput = target.elements.namedItem('name') as HTMLInputElement;
+    const id = idInput.value;
+    const email = emailInput.value;
+    const name = nameInput.value;
+    target.reset();
+  }, []);
 
-  const onSubmitAddUser = useCallback<FormEventHandler>(
-    (e) => {
-      e.preventDefault();
-      const target = e.target as HTMLFormElement;
-      const emailInput = target.elements.namedItem('email') as HTMLInputElement;
-      const nameInput = target.elements.namedItem('name') as HTMLInputElement;
-      const email = emailInput.value;
-      const name = nameInput.value;
-      target.reset();
-      addUser({
-        variables: { name, email },
-        refetchQueries: [{ query: GET_USERS }],
-        // update: (cache, result) => {
-        //   const stored = cache.readQuery<Pick<Query, 'users'>>({ query: GET_USERS });
-        //   const newData = {
-        //     users: [...stored.users, result?.data?.addUser],
-        //   };
-        //   cache.writeQuery({ query: GET_USERS, data: newData });
-        // },
-      })
-        .then((res) => console.log({ res }))
-        .catch((err) => console.error(err));
-    },
-    [addUser]
-  );
+  const onSubmitAddUser = useCallback<FormEventHandler>((e) => {
+    e.preventDefault();
+    const target = e.target as HTMLFormElement;
+    const emailInput = target.elements.namedItem('email') as HTMLInputElement;
+    const nameInput = target.elements.namedItem('name') as HTMLInputElement;
+    const email = emailInput.value;
+    const name = nameInput.value;
+    target.reset();
+  }, []);
 
   const onSubmitMessage = useCallback<FormEventHandler>(
     (e) => {
