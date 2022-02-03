@@ -18,10 +18,24 @@ export type Message = {
   text: Scalars['String'];
 };
 
+export type Money = {
+  __typename?: 'Money';
+  amount: Scalars['Int'];
+  currency: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  addUser: Array<Maybe<User>>;
   editProfile: User;
+  editUser: User;
   sendMessage?: Maybe<Array<Maybe<Message>>>;
+};
+
+
+export type MutationAddUserArgs = {
+  email: Scalars['String'];
+  name: Scalars['String'];
 };
 
 
@@ -31,14 +45,27 @@ export type MutationEditProfileArgs = {
 };
 
 
+export type MutationEditUserArgs = {
+  email: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
+
 export type MutationSendMessageArgs = {
   text: Scalars['String'];
+};
+
+export type Percent = {
+  __typename?: 'Percent';
+  percent: Scalars['Int'];
 };
 
 export type Query = {
   __typename?: 'Query';
   messages: Array<Maybe<Message>>;
   profile?: Maybe<User>;
+  unionValues: Array<Maybe<UnionValue>>;
   users: Array<Maybe<User>>;
 };
 
@@ -51,6 +78,8 @@ export type Subscription = {
   __typename?: 'Subscription';
   messageWasSent?: Maybe<Array<Maybe<Message>>>;
 };
+
+export type UnionValue = Money | Percent;
 
 export type User = {
   __typename?: 'User';
