@@ -1,6 +1,10 @@
 import React, { FormEventHandler, memo, useCallback, useEffect } from 'react';
 import { gql, useLazyQuery, useMutation, useQuery, useSubscription } from '@apollo/client';
-import { Mutation, Subscription } from 'src/server.types';
+import {
+  Mutation,
+  // Query,
+  Subscription,
+} from 'src/server.types';
 
 const GET_PROFILE = gql`
   query getProfile {
