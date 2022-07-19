@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { FC } from 'react';
 import { ApolloClient, ApolloProvider, InMemoryCache, split, HttpLink } from '@apollo/client';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
@@ -23,7 +23,7 @@ const splitLink = split(
   httpLink
 );
 
-export type Props = {
+export type ClientProps = {
   children: React.ReactChildren | React.ReactNode;
 };
 
@@ -32,4 +32,4 @@ export const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-export const Client = memo<Props>(({ children }) => <ApolloProvider client={client}>{children}</ApolloProvider>);
+export const Client: FC<ClientProps> = ({ children }) => <ApolloProvider client={client}>{children}</ApolloProvider>;
