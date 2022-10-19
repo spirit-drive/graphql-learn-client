@@ -22,12 +22,11 @@ const SEND_MESSAGE = gql`
 `;
 
 export const MessageExample: FC = () => {
-  const [sendMessage, { error: mutationError, loading: mutationLoading }] = useMutation<
-    Pick<Mutation, 'sendMessage'>,
-    SendMessageVariables
-  >(SEND_MESSAGE);
+  const [sendMessage, { error: mutationError }] = useMutation<Pick<Mutation, 'sendMessage'>, SendMessageVariables>(
+    SEND_MESSAGE
+  );
 
-  const { data: subscribeData, error, loading } = useSubscription<Subscription>(MESSAGE_WAS_SENT);
+  const { data: subscribeData, error } = useSubscription<Subscription>(MESSAGE_WAS_SENT);
 
   const onSubmit: FormEventHandler = (e) => {
     e.preventDefault();
@@ -38,7 +37,6 @@ export const MessageExample: FC = () => {
     sendMessage({ variables: { text } });
   };
 
-  if (loading || mutationLoading) return <div>loading...</div>;
   if (error || mutationError) return <div>{(error || mutationError).message}</div>;
 
   return (

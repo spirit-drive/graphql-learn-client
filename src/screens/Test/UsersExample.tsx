@@ -12,9 +12,8 @@ export const GET_USERS = gql`
 `;
 
 export const UsersExample: FC = () => {
-  const [getUsers, { data, error, loading }] = useLazyQuery(GET_USERS);
+  const [getUsers, { data, error }] = useLazyQuery(GET_USERS);
 
-  if (loading) return <div>loading...</div>;
   if (error) return <div>{error.message}</div>;
 
   return (
