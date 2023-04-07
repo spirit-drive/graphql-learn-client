@@ -24,7 +24,7 @@ const splitLink = split(
 );
 
 export type ClientProps = {
-  children: React.ReactChildren | React.ReactNode;
+  children: React.ReactNode;
 };
 
 export const client = new ApolloClient({

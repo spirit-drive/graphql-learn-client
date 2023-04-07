@@ -36,6 +36,7 @@
     "@typescript-eslint/no-use-before-define": ["error"],
     "no-plusplus": 0,
     "import/prefer-default-export": 0,
+    "react/function-component-definition": 0,
     "arrow-body-style": ["error", "as-needed", { "requireReturnForObjectLiteral": false }],
     "@typescript-eslint/lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
     "no-useless-constructor": "off",
